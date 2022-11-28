@@ -193,3 +193,21 @@ You can create your own HttpRequestTransformer object to add extra headers to yo
 You can create your own HttpResponseTransformer object to validate the response and decode a custom value from the response data.
 
 The codable (encodable, decodable, codable) pipelines are a good example of this approach.
+
+```swift
+let client = UrlSessionHttpClient(log: true)
+								.authorization("Basic \(token)")
+        				.validateStatusCode()
+            
+let apiBaseUrl = HttpUrl(host: "jsonplaceholder.typicode.com")            
+
+func todos(body: Body) async throws -> [Todo] {
+    try await HttpRawPipeline(
+        url: apiBaseUrl.path("todos")
+    )
+    .decode(with: decoder)
+    .map(\.items)
+    .encode(with: encoder)
+    .execute(with: body)
+}
+```

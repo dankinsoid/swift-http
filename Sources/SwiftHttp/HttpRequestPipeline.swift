@@ -35,7 +35,7 @@ public protocol HttpRequestPipeline<Request, Response> {
     /// - Returns: The generic Response object
     ///
     func execute(
-        request: Request,
+        with request: Request,
         _ executor: (HttpRequest) async throws -> HttpResponse
     ) async throws -> Response
 }
@@ -56,6 +56,26 @@ public extension HttpRequestPipeline where Request == Void {
     func execute(
         _ executor: (HttpRequest) async throws -> HttpResponse
     ) async throws -> Response {
-        try await execute(request: (), executor)
+        try await execute(with: (), executor)
+    }
+}
+
+public extension HttpRequestPipeline {
+    
+    ///
+    /// Executes the pipeline using an executor object
+    ///
+    /// The executor is usually a HttpClient task function, returning a response
+    ///
+    /// - Parameter executor: The  executor function to perform the HttpRequest
+    ///
+    /// - Throws: `HttpError` if something was wrong with the request
+    ///
+    /// - Returns: The generic Response object
+    ///
+    func execute<T>(
+        _ executor: (HttpRequest) async throws -> HttpResponse
+    ) async throws -> Response where Request == T? {
+        try await execute(with: nil, executor)
     }
 }

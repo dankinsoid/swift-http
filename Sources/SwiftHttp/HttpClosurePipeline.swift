@@ -1,11 +1,11 @@
 import Foundation
 
 /// A raw pipeline can be used to send an recieve raw body data values
-struct HttpClosurePipeline<Request, Response>: HttpRequestPipeline {
+public struct HttpClosurePipeline<Request, Response>: HttpRequestPipeline {
     
     private let pipeline: PipelineExecute<Request, Response>
     
-    init(_ execute: @escaping PipelineExecute<Request, Response>) {
+    public init(_ execute: @escaping PipelineExecute<Request, Response>) {
         pipeline = execute
     }
     
@@ -19,8 +19,8 @@ struct HttpClosurePipeline<Request, Response>: HttpRequestPipeline {
     ///
     /// - Returns: The HTTP response object
     ///
-    func execute(
-        request: Request,
+    public func execute(
+        with request: Request,
         _ executor: (HttpRequest) async throws -> HttpResponse
     ) async throws -> Response {
         try await pipeline(request, executor)

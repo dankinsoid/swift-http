@@ -13,7 +13,6 @@ public struct HttpRawPipeline: HttpRequestPipeline {
     public var url: HttpUrl
     public var method: HttpMethod
     public var headers: [HttpHeaderKey: String]
-    public var body: Data?
     
     ///
     /// Initialize the pipeline
@@ -26,13 +25,11 @@ public struct HttpRawPipeline: HttpRequestPipeline {
     public init(
         url: HttpUrl,
         method: HttpMethod,
-        headers: [HttpHeaderKey: String] = [:],
-        body: Data? = nil
+        headers: [HttpHeaderKey: String] = [:]
     ) {
         self.url = url
         self.method = method
         self.headers = headers
-        self.body = body
     }
     
     ///
@@ -46,14 +43,14 @@ public struct HttpRawPipeline: HttpRequestPipeline {
     /// - Returns: The HTTP response object
     ///
     public func execute(
-        request: Void,
+        with request: Data?,
         _ executor: (HttpRequest) async throws -> HttpResponse
     ) async throws -> HttpResponse {
         let request = HttpRawRequest(
         	url: url,
           method: method,
           headers: headers,
-          body: body
+          body: request
         )
         return try await executor(request)
     }

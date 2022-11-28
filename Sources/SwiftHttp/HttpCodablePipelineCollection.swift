@@ -68,10 +68,9 @@ public extension HttpCodablePipelineCollection {
         try await HttpRawPipeline(
             url: url,
             method: method,
-            headers: headers,
-            body: body
+            headers: headers
         )
-            .execute(executor)
+        .execute(with: body, executor)
     }
     
     ///
@@ -95,13 +94,13 @@ public extension HttpCodablePipelineCollection {
         headers: [HttpHeaderKey: String] = [:],
         body: T
     ) async throws -> HttpResponse {
-        try await HttpEncodablePipeline<T>(
+        try await HttpRawPipeline(
             url: url,
             method: method,
-            headers: headers,
-            encoder: encoder()
+            headers: headers
         )
-        .execute(request: body, executor)
+        .encode(with: encoder())
+        .execute(with: body, executor)
     }
     
     ///
@@ -125,16 +124,13 @@ public extension HttpCodablePipelineCollection {
         body: Data? = nil,
         headers: [HttpHeaderKey: String] = [:]
     ) async throws -> U {
-        let request = HttpRawRequest(
+        try await HttpRawPipeline(
             url: url,
             method: method,
-            headers: headers,
-            body: body
+            headers: headers
         )
-        let pipeline = HttpDecodablePipeline<U>(
-            decoder: decoder()
-        )
-        return try await pipeline.execute(request: request, executor)
+        .decode(with: decoder())
+        .execute(with: body, executor)
     }
     
     ///
@@ -158,13 +154,13 @@ public extension HttpCodablePipelineCollection {
         headers: [HttpHeaderKey: String] = [:],
         body: T
     ) async throws -> U {
-        let pipeline = HttpCodablePipeline<T, U>(
-        		url: url,
-        		method: method,
-        		headers: headers,
-        		encoder: encoder(),
-            decoder: decoder()
+        try await HttpRawPipeline(
+            url: url,
+            method: method,
+            headers: headers
         )
-        return try await pipeline.execute(request: body, executor)
+        .encode(with: encoder())
+        .decode(with: decoder())
+        .execute(with: body, executor)
     }
 }

@@ -7,38 +7,47 @@
 
 import Foundation
 
-/// A decodable pipeline workflow, to decode a value from the response
-public struct HttpDecodablePipeline<Response: Decodable>: HttpRequestPipeline {
+public extension HttpRequestPipeline where Response == Data {
     
-    let decoder: HttpResponseDecoder<Response>
-    
-    ///
-    /// Initialize the pipeline
-    ///
-    /// - Parameter decoder: The decoder used to decode the response data
-    ///
-    public init(
-    	decoder: HttpResponseDecoder<Response>
-    ) {
-        self.decoder = decoder
+    /// A decodable pipeline workflow, to decode a value from the response
+    func decode<T: Decodable>(
+        with decoder: HttpResponseDecoder<T> = .json(),
+        errorType: (any Error & Decodable).Type? = nil
+    ) -> some HttpRequestPipeline<Request, T> {
+        map {
+            return try decoder.decode($0)
+        }
     }
     
-    ///
-    /// Executes  the request, encodes the body, validates the response and decodes the data
-    ///
-    /// - Parameter request: The HttpRequest
-    /// - Parameter executor: The  executor function to perform the HttpRequest
-    ///
-    /// - Throws: `Error` if something was wrong
-    ///
-    /// - Returns: The decoded response object
-    ///
-    public func execute(
-        request: HttpRequest,
-        _ executor: (HttpRequest) async throws -> HttpResponse
-    ) async throws -> Response {
-        let response = try await executor(request)
-        return try decoder.decode(response.data)
+    /// A decodable pipeline workflow, to decode a value from the response
+    func decode<T: Decodable>(
+        _ type: T.Type,
+        with decoder: HttpDataDecoder = JSONDecoder(),
+        validators: [any HttpResponseValidator] = [.contentJson]
+    ) -> some HttpRequestPipeline<Request, T> {
+        decode(
+            with: HttpResponseDecoder(decoder: decoder, validators: validators)
+        )
     }
 }
 
+public extension HttpRequestPipeline where Response == HttpResponse {
+    
+    /// A decodable pipeline workflow, to decode a value from the response
+    func decode<T: Decodable>(
+        with decoder: HttpResponseDecoder<T> = .json()
+    ) -> some HttpRequestPipeline<Request, T> {
+        map(\.data).decode(with: decoder)
+    }
+    
+    /// A decodable pipeline workflow, to decode a value from the response
+    func decode<T: Decodable>(
+        _ type: T.Type,
+        with decoder: HttpDataDecoder = JSONDecoder(),
+        validators: [any HttpResponseValidator] = [.contentJson]
+    ) -> some HttpRequestPipeline<Request, T> {
+        decode(
+            with: HttpResponseDecoder(decoder: decoder, validators: validators)
+        )
+    }
+}

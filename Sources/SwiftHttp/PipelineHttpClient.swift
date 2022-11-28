@@ -23,6 +23,6 @@ struct PipelineHttpClient: HttpClient {
     }
     
     private func execute(_ req: HttpRequest, task: (_ req: HttpRequest) async throws -> HttpResponse) async throws -> HttpResponse {
-        try await pipeline.execute(request: req, task)
+        try await pipeline.execute(with: req, task)
     }
 }

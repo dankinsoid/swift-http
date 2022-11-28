@@ -17,13 +17,13 @@ public protocol HttpResponseValidator: HttpRequestPipeline<HttpRequest, HttpResp
     ///
     /// - Throws: `Error` if something was wrong with the response
     ///
-    func validate(_ response: HttpResponse) throws
+    func validate(_ response: Response) throws
 }
 
 extension HttpRequestPipeline where Self: HttpResponseValidator {
     
     public func execute(
-        request: HttpRequest,
+        with request: HttpRequest,
         _ executor: ((HttpRequest) async throws -> HttpResponse)
     ) async throws -> Response {
         let response = try await executor(request)

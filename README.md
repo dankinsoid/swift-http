@@ -186,12 +186,10 @@ It is possible to check for multiple validation criterias using a HttpResponseVa
 
 ## Pipelines
 
-A pipeline allows you to transform a raw request and a raw response using a set of custom actions. 
+A pipeline allows you to transform a request and a response using a set of custom actions. 
 
 You can create your own HttpRequestTransformer object to add extra headers to your request and encode a custom body object to a data value.
 
 You can create your own HttpResponseTransformer object to validate the response and decode a custom value from the response data.
 
 The codable (encodable, decodable, codable) pipelines are a good example of this approach.
-
-

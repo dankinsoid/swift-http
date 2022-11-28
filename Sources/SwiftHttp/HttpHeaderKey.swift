@@ -162,6 +162,7 @@ public struct HttpHeaderKey {
 	public static let received: HttpHeaderKey = "Received"
 	public static let receivedSPF: HttpHeaderKey = "Received-SPF"
 	public static let references: HttpHeaderKey = "References"
+  public static let referer: HttpHeaderKey = "Referer"
 	public static let relayVersion: HttpHeaderKey = "Relay-Version"
 	public static let replyBy: HttpHeaderKey = "Reply-By"
 	public static let replyTo: HttpHeaderKey = "Reply-To"

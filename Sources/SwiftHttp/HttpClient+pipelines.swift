@@ -18,7 +18,7 @@ public extension HttpClient {
     }
     
     /// Validates a HttpResponse using an array of validators
-    func validate(_ validators: [any HttpResponseValidator]) -> HttpClient {
+    func validators(_ validators: [any HttpResponseValidator]) -> HttpClient {
         pipeline { req, executor in
             let response = try await executor(req)
             try HttpResponseValidation(validators).validate(response)
@@ -27,12 +27,12 @@ public extension HttpClient {
     }
     
     /// Validates a HttpResponse using an array of validators
-    func validate(_ validators: any HttpResponseValidator...) -> HttpClient {
-        validate(validators)
+    func validators(_ validators: any HttpResponseValidator...) -> HttpClient {
+        self.validators(validators)
     }
     
     /// Validates a HttpResponse using an array of validators
     func validateStatusCode(successCode: HttpStatusCode? = nil) -> HttpClient {
-        validate(HttpStatusCodeValidator(successCode))
+        validators(HttpStatusCodeValidator(successCode))
     }
 }

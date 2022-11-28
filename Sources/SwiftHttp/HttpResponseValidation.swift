@@ -10,14 +10,14 @@ import Foundation
 /// Validates a HttpResponse using an array of validators
 public struct HttpResponseValidation {
     
-    let validators: [HttpResponseValidator]
+    let validators: [any HttpResponseValidator]
     
     ///
     /// Initialize a new validation object using an array of validators
     ///
     /// - Parameter validators: The array of HttpResponseValidators
     ///
-    public init(_ validators: [HttpResponseValidator]) {
+    public init(_ validators: [any HttpResponseValidator]) {
         self.validators = validators
     }
 

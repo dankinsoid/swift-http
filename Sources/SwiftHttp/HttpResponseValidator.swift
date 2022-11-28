@@ -8,7 +8,7 @@
 import Foundation
 
 /// A generic response validator protocol
-public protocol HttpResponseValidator {
+public protocol HttpResponseValidator: HttpRequestPipeline<HttpRequest, HttpResponse> {
     
     ///
     /// Validates a response object
@@ -20,3 +20,14 @@ public protocol HttpResponseValidator {
     func validate(_ response: HttpResponse) throws
 }
 
+extension HttpRequestPipeline where Self: HttpResponseValidator {
+    
+    public func execute(
+        request: HttpRequest,
+        _ executor: ((HttpRequest) async throws -> HttpResponse)
+    ) async throws -> Response {
+        let response = try await executor(request)
+        try validate(response)
+        return response
+    }
+}

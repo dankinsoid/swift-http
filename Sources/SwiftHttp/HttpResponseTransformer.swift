@@ -14,7 +14,7 @@ public protocol HttpResponseTransformer {
     associatedtype T: Decodable
     
     /// Validators to perform before the decoding
-    var validators: [HttpResponseValidator] { get }
+    var validators: [any HttpResponseValidator] { get }
     
     ///
     /// Decodes the response data into a custom decodable object

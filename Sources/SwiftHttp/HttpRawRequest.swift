@@ -44,7 +44,7 @@ public struct HttpRawRequest: HttpRequest {
 extension HttpRawRequest: Codable, Equatable {
 }
 
-public extension HttpRawRequest {
+public extension HttpRequest {
 
     ///
     /// Change the method of the request
@@ -53,8 +53,8 @@ public extension HttpRawRequest {
     ///
     /// - Returns: A new request object with the updated method
     ///
-    func method(_ method: HttpMethod) -> HttpRawRequest {
-        .init(url: url, method: method, headers: headers, body: body)
+    func method(_ method: HttpMethod) -> HttpRequest {
+        HttpRawRequest(url: url, method: method, headers: headers, body: body)
     }
 
     ///
@@ -65,10 +65,10 @@ public extension HttpRawRequest {
     ///
     /// - Returns: A new request object with the updated headers
     ///
-    func header(_ key: HttpHeaderKey, _ value: String) -> HttpRawRequest {
+    func header(_ key: HttpHeaderKey, _ value: String) -> HttpRequest {
         var newHeaders = headers
         newHeaders[key] = value
-        return .init(url: url, method: method, headers: newHeaders, body: body)
+        return HttpRawRequest(url: url, method: method, headers: newHeaders, body: body)
     }
     
     ///
@@ -78,7 +78,7 @@ public extension HttpRawRequest {
     ///
     /// - Returns: A new request object with the updated body value
     ///
-    func body(_ body: Data) -> HttpRawRequest {
-        .init(url: url, method: method, headers: headers, body: body)
+    func body(_ body: Data) -> HttpRequest {
+        HttpRawRequest(url: url, method: method, headers: headers, body: body)
     }
 }

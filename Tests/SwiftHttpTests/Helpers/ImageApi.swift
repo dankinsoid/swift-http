@@ -14,8 +14,8 @@ struct ImageApi {
     let apiBaseUrl = HttpUrl(host: "via.placeholder.com")
 
     func download() async throws -> Data {
-        let pipeline = HttpRawPipeline(url: apiBaseUrl.path("150"), method: .get)
-        let res = try await pipeline.execute(client.downloadTask)
+        let request = HttpRawRequest(url: apiBaseUrl.path("150"), method: .get)
+        let res = try await client.downloadTask(request)
         return res.data
     }
 }

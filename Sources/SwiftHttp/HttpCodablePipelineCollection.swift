@@ -63,17 +63,15 @@ public extension HttpCodablePipelineCollection {
         url: HttpUrl,
         method: HttpMethod,
         headers: [HttpHeaderKey: String] = [:],
-        body: Data? = nil,
-        validators: [HttpResponseValidator] = [HttpStatusCodeValidator()]
+        body: Data? = nil
     ) async throws -> HttpResponse {
-        let pipeline: HttpRawPipeline = .init(
+        try await HttpRawPipeline(
             url: url,
             method: method,
             headers: headers,
-            body: body,
-            validators: validators
+            body: body
         )
-        return try await pipeline.execute(executor)
+            .execute(executor)
     }
     
     ///
@@ -91,22 +89,19 @@ public extension HttpCodablePipelineCollection {
     /// - Returns: The HTTP response object
     ///
     func encodableRequest<T: Encodable>(
-        executor: ((HttpRequest) async throws -> HttpResponse),
+        executor: (HttpRequest) async throws -> HttpResponse,
         url: HttpUrl,
         method: HttpMethod,
         headers: [HttpHeaderKey: String] = [:],
-        body: T,
-        validators: [HttpResponseValidator] = [HttpStatusCodeValidator()]
+        body: T
     ) async throws -> HttpResponse {
-        let pipeline: HttpEncodablePipeline<T> = .init(
+        try await HttpEncodablePipeline<T>(
             url: url,
             method: method,
             headers: headers,
-            body: body,
-            validators: validators,
             encoder: encoder()
         )
-        return try await pipeline.execute(executor)
+        .execute(request: body, executor)
     }
     
     ///
@@ -128,18 +123,18 @@ public extension HttpCodablePipelineCollection {
         url: HttpUrl,
         method: HttpMethod,
         body: Data? = nil,
-        headers: [HttpHeaderKey: String] = [:],
-        validators: [HttpResponseValidator] = [HttpStatusCodeValidator()]
+        headers: [HttpHeaderKey: String] = [:]
     ) async throws -> U {
-        let pipeline: HttpDecodablePipeline<U> = .init(
+        let request = HttpRawRequest(
             url: url,
             method: method,
             headers: headers,
-            body: body,
-            validators: validators,
+            body: body
+        )
+        let pipeline = HttpDecodablePipeline<U>(
             decoder: decoder()
         )
-        return try await pipeline.execute(executor)
+        return try await pipeline.execute(request: request, executor)
     }
     
     ///
@@ -161,17 +156,15 @@ public extension HttpCodablePipelineCollection {
         url: HttpUrl,
         method: HttpMethod,
         headers: [HttpHeaderKey: String] = [:],
-        body: T,
-        validators: [HttpResponseValidator] = [HttpStatusCodeValidator()]) async throws -> U {
-            let pipeline: HttpCodablePipeline<T, U> = .init(
-                url: url,
-                method: method,
-                headers: headers,
-                body: body,
-                validators: validators,
-                encoder: encoder(),
-                decoder: decoder()
-            )
-            return try await pipeline.execute(executor)
-        }
+        body: T
+    ) async throws -> U {
+        let pipeline = HttpCodablePipeline<T, U>(
+        		url: url,
+        		method: method,
+        		headers: headers,
+        		encoder: encoder(),
+            decoder: decoder()
+        )
+        return try await pipeline.execute(request: body, executor)
+    }
 }

@@ -13,4 +13,10 @@ public extension [HttpHeaderKey: String] {
         result[.contentType] = "application/json"
         return result
     }
+    
+    func authorization(_ value: String) -> [HttpHeaderKey: String] {
+        var result = self
+        result[.authorization] = value
+        return result
+    }
 }

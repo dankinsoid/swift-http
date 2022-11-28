@@ -10,13 +10,6 @@ public extension HttpClient {
         pipeline(HttpClosurePipeline(execute))
     }
     
-    /// Set header field for all requests
-    func header(_ key: HttpHeaderKey, _ value: String) -> HttpClient {
-        pipeline { req, executor in
-            try await executor(req.header(key, value))
-        }
-    }
-    
     /// Validates a HttpResponse using an array of validators
     func validators(_ validators: [any HttpResponseValidator]) -> HttpClient {
         pipeline { req, executor in
@@ -34,5 +27,18 @@ public extension HttpClient {
     /// Validates a HttpResponse using an array of validators
     func validateStatusCode(successCode: HttpStatusCode? = nil) -> HttpClient {
         validators(HttpStatusCodeValidator(successCode))
+    }
+    
+    
+    /// Set header field for all requests
+    func header(_ key: HttpHeaderKey, _ value: String) -> HttpClient {
+        pipeline { req, executor in
+            try await executor(req.header(key, value))
+        }
+    }
+    
+    /// Set authorization header field for all requests
+    func authorization(_ value: String) -> HttpClient {
+        header(.authorization, value)
     }
 }

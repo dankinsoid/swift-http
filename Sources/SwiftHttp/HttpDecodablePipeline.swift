@@ -15,7 +15,7 @@ public extension HttpRequestPipeline where Response == Data {
         errorType: (any Error & Decodable).Type? = nil
     ) -> some HttpRequestPipeline<Request, T> {
         map {
-            return try decoder.decode($0)
+            try decoder.decode($0)
         }
     }
     

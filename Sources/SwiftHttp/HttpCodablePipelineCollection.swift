@@ -63,13 +63,15 @@ public extension HttpCodablePipelineCollection {
         url: HttpUrl,
         method: HttpMethod,
         headers: [HttpHeaderKey: String] = [:],
-        body: Data? = nil
+        body: Data? = nil,
+        validators: [any HttpResponseValidator] = []
     ) async throws -> HttpResponse {
         try await HttpRawPipeline(
             url: url,
             method: method,
             headers: headers
         )
+        .validators(validators)
         .execute(with: body, executor)
     }
     
@@ -92,7 +94,8 @@ public extension HttpCodablePipelineCollection {
         url: HttpUrl,
         method: HttpMethod,
         headers: [HttpHeaderKey: String] = [:],
-        body: T
+        body: T,
+        validators: [any HttpResponseValidator] = []
     ) async throws -> HttpResponse {
         try await HttpRawPipeline(
             url: url,
@@ -100,6 +103,7 @@ public extension HttpCodablePipelineCollection {
             headers: headers
         )
         .encode(with: encoder())
+        .validators(validators)
         .execute(with: body, executor)
     }
     
@@ -122,7 +126,8 @@ public extension HttpCodablePipelineCollection {
         url: HttpUrl,
         method: HttpMethod,
         body: Data? = nil,
-        headers: [HttpHeaderKey: String] = [:]
+        headers: [HttpHeaderKey: String] = [:],
+        validators: [any HttpResponseValidator] = []
     ) async throws -> U {
         try await HttpRawPipeline(
             url: url,
@@ -130,6 +135,7 @@ public extension HttpCodablePipelineCollection {
             headers: headers
         )
         .decode(with: decoder())
+        .validators(validators)
         .execute(with: body, executor)
     }
     
@@ -152,7 +158,8 @@ public extension HttpCodablePipelineCollection {
         url: HttpUrl,
         method: HttpMethod,
         headers: [HttpHeaderKey: String] = [:],
-        body: T
+        body: T,
+        validators: [any HttpResponseValidator] = []
     ) async throws -> U {
         try await HttpRawPipeline(
             url: url,
@@ -161,6 +168,7 @@ public extension HttpCodablePipelineCollection {
         )
         .encode(with: encoder())
         .decode(with: decoder())
+        .validators(validators)
         .execute(with: body, executor)
     }
 }

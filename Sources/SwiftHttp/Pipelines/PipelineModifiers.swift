@@ -54,4 +54,13 @@ public extension HttpRequestPipeline {
     func validateStatusCode(successCode: HttpStatusCode? = nil) -> some HttpRequestPipeline<Request, Response> {
         validators(HttpStatusCodeValidator(successCode))
     }
+    
+    func chain<Out>(_ chain: (Self) -> Out) -> Out {
+        chain(self)
+    }
+    
+    
+    func chain<Chain: HttpRequestPipelineChain>(_ chain: Chain) -> Chain.Out where Chain.In == Self  {
+        chain.chain(pipeline: self)
+    }
 }

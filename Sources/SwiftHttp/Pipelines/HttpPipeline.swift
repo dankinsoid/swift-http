@@ -1,5 +1,5 @@
 //
-//  HttpRequestPipeline.swift
+//  HttpPipeline.swift
 //  SwiftHttp
 //
 //  Created by Tibor Bodecs on 2022. 03. 10..
@@ -7,15 +7,13 @@
 
 import Foundation
 
-public typealias PipelineExecute<Request, Response> = (Request, (HttpRequest) async throws -> HttpResponse) async throws -> Response
-
 ///
 /// Abstract HTTP request pipeline
 ///
 /// A pipeline is a descriptor of a request -> response workflow.
 /// It might includes validations date encoding, decoding
 ///
-public protocol HttpRequestPipeline<Request, Response> {
+public protocol HttpPipeline<Request, Response> {
     
     /// generic request type
     associatedtype Request
@@ -35,12 +33,11 @@ public protocol HttpRequestPipeline<Request, Response> {
     /// - Returns: The generic Response object
     ///
     func execute(
-        with request: Request,
-        _ executor: (HttpRequest) async throws -> HttpResponse
+        with request: Request
     ) async throws -> Response
 }
 
-public extension HttpRequestPipeline where Request == Void {
+public extension HttpPipeline where Request == Void {
     
     ///
     /// Executes the pipeline using an executor object
@@ -53,14 +50,12 @@ public extension HttpRequestPipeline where Request == Void {
     ///
     /// - Returns: The generic Response object
     ///
-    func execute(
-        _ executor: (HttpRequest) async throws -> HttpResponse
-    ) async throws -> Response {
-        try await execute(with: (), executor)
+    func execute() async throws -> Response {
+        try await execute(with: ())
     }
 }
 
-public extension HttpRequestPipeline {
+public extension HttpPipeline {
     
     ///
     /// Executes the pipeline using an executor object
@@ -73,9 +68,7 @@ public extension HttpRequestPipeline {
     ///
     /// - Returns: The generic Response object
     ///
-    func execute<T>(
-        _ executor: (HttpRequest) async throws -> HttpResponse
-    ) async throws -> Response where Request == T? {
-        try await execute(with: nil, executor)
+    func execute<T>() async throws -> Response where Request == T? {
+        try await execute(with: nil)
     }
 }

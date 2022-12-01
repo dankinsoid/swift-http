@@ -8,7 +8,7 @@
 import Foundation
 
 /// A raw pipeline can be used to send an recieve raw body data values
-public struct HttpRawPipeline: HttpRequestPipeline {
+public struct HttpRawPipeline: HttpPipeline {
     
     public var url: HttpUrl
     public var method: HttpMethod
@@ -43,15 +43,13 @@ public struct HttpRawPipeline: HttpRequestPipeline {
     /// - Returns: The HTTP response object
     ///
     public func execute(
-        with request: Data?,
-        _ executor: (HttpRequest) async throws -> HttpResponse
-    ) async throws -> HttpResponse {
-        let request = HttpRawRequest(
-        	url: url,
+        with request: Data?
+    ) async throws -> HttpRawRequest {
+        HttpRawRequest(
+          url: url,
           method: method,
           headers: headers,
           body: request
         )
-        return try await executor(request)
     }
 }

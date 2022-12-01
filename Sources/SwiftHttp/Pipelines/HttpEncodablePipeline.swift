@@ -7,12 +7,12 @@
 
 import Foundation
 
-public extension HttpRequestPipeline where Request == Data {
+public extension HttpPipeline where Request == Data {
     
     /// An encodable pipeline can be used to send an encodable object as a request body
     func encode<T: Encodable>(
         with encoder: HttpRequestEncoder<T> = .json()
-    ) -> some HttpRequestPipeline<T, Response> {
+    ) -> some HttpPipeline<T, Response> {
         pullback {
             try encoder.encode($0)
         }
@@ -23,17 +23,17 @@ public extension HttpRequestPipeline where Request == Data {
         _ type: T.Type,
         with encoder: HttpDataEncoder = JSONEncoder(),
         headers: [HttpHeaderKey: String] = [:].acceptJson().contentTypeJson()
-    ) -> some HttpRequestPipeline<T, Response> {
+    ) -> some HttpPipeline<T, Response> {
         encode(with: HttpRequestEncoder(encoder: encoder, headers: headers))
     }
 }
 
-public extension HttpRequestPipeline where Request == Data? {
+public extension HttpPipeline where Request == Data? {
     
     /// An encodable pipeline can be used to send an encodable object as a request body
     func encode<T: Encodable>(
         with encoder: HttpRequestEncoder<T> = .json()
-    ) -> some HttpRequestPipeline<T, Response> {
+    ) -> some HttpPipeline<T, Response> {
         pullback {
             try encoder.encode($0)
         }
@@ -44,7 +44,7 @@ public extension HttpRequestPipeline where Request == Data? {
         _ type: T.Type,
         with encoder: HttpDataEncoder = JSONEncoder(),
         headers: [HttpHeaderKey: String] = [:].acceptJson().contentTypeJson()
-    ) -> some HttpRequestPipeline<T, Response> {
+    ) -> some HttpPipeline<T, Response> {
         encode(with: HttpRequestEncoder(encoder: encoder, headers: headers))
     }
 }

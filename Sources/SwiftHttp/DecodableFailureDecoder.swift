@@ -41,9 +41,9 @@ public extension HttpDataDecoder {
     }
 }
 
-public extension HttpResponseDecoder {
+//public extension HttpResponseDecoder {
     
-    func decodeError(_ type: (some Decodable & Error).Type) -> HttpResponseDecoder {
-        HttpResponseDecoder(decoder: decoder.decodeError(type), validators: validators)
-    }
-}
+//    func decodeError(_ type: (some Decodable & Error).Type) -> HttpResponseDecoder {
+//        HttpResponseDecoder(decoder: decoder.decodeError(type), validators: validators)
+//    }
+//}

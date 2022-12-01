@@ -8,8 +8,8 @@
 import Foundation
 
 /// Validates a header value using a key and a validation block
-public struct HttpHeaderValidator: HttpResponseValidator {
-    
+public struct HttpHeaderValidator: HttpValidator {
+
     /// The header key to look for
     let key: HttpHeaderKey
     
@@ -26,9 +26,9 @@ public struct HttpHeaderValidator: HttpResponseValidator {
     /// Initialize a new validator
     ///
     /// - Parameter key The header key to look up the value
-    /// - Parameter blcok The validation block using the header value
+    /// - Parameter block The validation block using the header value
     /// 
-    public init(_ key: HttpHeaderKey, _ block: @escaping ((String) -> Bool)) {
+    public init(_ key: HttpHeaderKey, _ block: @escaping (String) -> Bool) {
         self.key = key
         self.block = block
     }
@@ -36,16 +36,16 @@ public struct HttpHeaderValidator: HttpResponseValidator {
     ///
     /// Validate a response object.
     ///
-    /// - Parameter response The response object that needs to be validated
+    /// - Parameter request The request object that needs to be validated
     ///
     /// - Throws A HttpError object if the validation fails
     ///
-    public func validate(_ response: HttpResponse) throws {
-        guard let value = response.headers[key] else {
-            throw HttpError.missingHeader(response)
+    public func validate(_ request: HttpResponse) async throws {
+        guard let value = request.headers[key] else {
+            throw HttpError.missingHeader(request)
         }
         guard block(value) else {
-            throw HttpError.invalidHeaderValue(response)
+            throw HttpError.invalidHeaderValue(request)
         }
     }
 }

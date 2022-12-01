@@ -3,13 +3,19 @@ import Foundation
 struct PipelineHttpClient: HttpClient {
     
     private let client: HttpClient
-    private let pipeline: any HttpRequestPipeline<HttpRequest, HttpResponse>
-    
-    init(client: HttpClient, pipeline: any HttpRequestPipeline<HttpRequest, HttpResponse>) {
+    private let requestPipeline: any HttpPipeline<HttpRequest, HttpRequest>
+    private let responsePipeline: any HttpPipeline<HttpResponse, HttpResponse>
+
+    init(
+      client: HttpClient,
+      requestPipeline: any HttpPipeline<HttpRequest, HttpRequest> = HttpEmptyPipeline(),
+      responsePipeline: any HttpPipeline<HttpResponse, HttpResponse> = HttpEmptyPipeline()
+    ) {
         self.client = client
-        self.pipeline = pipeline
+        self.requestPipeline = requestPipeline
+        self.responsePipeline = responsePipeline
     }
-    
+
     func dataTask(_ req: HttpRequest) async throws -> HttpResponse {
         try await execute(req, task: client.dataTask)
     }
@@ -23,6 +29,6 @@ struct PipelineHttpClient: HttpClient {
     }
     
     private func execute(_ req: HttpRequest, task: (_ req: HttpRequest) async throws -> HttpResponse) async throws -> HttpResponse {
-        try await pipeline.execute(with: req, task)
+        try await responsePipeline.execute(with: task(requestPipeline.execute(with: req)))
     }
 }

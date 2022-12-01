@@ -1,8 +1,8 @@
 import Foundation
 
-public struct HttpEmptyPipeline: HttpRequestPipeline {
+public struct HttpEmptyPipeline<Request>: HttpPipeline {
     
-    public func execute(with request: HttpRequest, _ executor: (HttpRequest) async throws -> HttpResponse) async throws -> HttpResponse {
-        try await executor(request)
+    public func execute(with request: Request) async throws -> Request {
+        request
     }
 }

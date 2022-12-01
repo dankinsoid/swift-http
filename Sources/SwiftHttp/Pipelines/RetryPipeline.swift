@@ -1,16 +1,16 @@
 import Foundation
 
-public extension HttpRequestPipeline {
+public extension HttpPipeline {
     
     func retry(
         count: UInt = 1,
         delay: Double = 0
-    ) -> some HttpRequestPipeline<Request, Response> {
-        HttpClosurePipeline { request, executor in
+    ) -> some HttpPipeline<Request, Response> {
+        HttpClosurePipeline { request in
             var failure: Error?
             for _ in 0...count {
                 do {
-                    return try await execute(with: request, executor)
+                    return try await execute(with: request)
                 } catch {
                     failure = error
                 }

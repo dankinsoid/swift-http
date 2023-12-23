@@ -68,7 +68,7 @@ You can create decodable, encodable, codable or raw request when using a codable
 
 ## Using raw requests & responses
 
-You can create raw HTTP requests using the HttpUrl and the HttpRawRequest type.   
+You can create raw HTTP requests using the HttpUrl and the URLRequest type.   
 
 ```swift
 let url = HttpUrl(
@@ -81,7 +81,7 @@ let url = HttpUrl(
     fragment: nil
 )
 
-let req = HttpRawRequest(
+let req = URLRequest(
     url: url, 
     method: .get, 
     headers: [:], 
@@ -138,7 +138,7 @@ let token: String = "valid-token"
 let body = try JSONEncoder().encode([
     "foo": "bar",
 ])
-let req = HttpRawRequest(
+let req = URLRequest(
     url: url,
     method: .post,
     headers: [
@@ -158,7 +158,7 @@ curl "https://localhost/login/" \
 print(req.urlRequest.curlString) 
 ```
 
-You can transform a HttpRequest into a URLReequest via the `.urlRequest` property.
+You can transform a URLRequest into a URLReequest via the `.urlRequest` property.
 You can print the cURL representation of a request by using the `.curlString` property on a URLRequest object.
 
 

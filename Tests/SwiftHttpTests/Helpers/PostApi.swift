@@ -1,5 +1,5 @@
 //
-//  PostsApi.swift
+//  PostApi.swift
 //  SwiftHttpTests
 //
 //  Created by Tibor Bodecs on 2022. 03. 10..
@@ -9,7 +9,6 @@ import Foundation
 import SwiftHttp
 
 struct PostApi: HttpCodablePipelineCollection {
-
     //    struct Failure: Codable {
     //        let message: String
     //    }
@@ -38,10 +37,10 @@ struct PostApi: HttpCodablePipelineCollection {
         try await decodableRequest(
             executor: client.dataTask,
             url:
-                apiBaseUrl
+            apiBaseUrl
                 .path("posts")
                 .query([
-                    "userId": String(userId)
+                    "userId": String(userId),
                 ]),
             method: .get
         )
@@ -82,7 +81,7 @@ struct PostApi: HttpCodablePipelineCollection {
         )
     }
 
-    func deletePost(_ id: Int) async throws -> HttpResponse {
+    func deletePost(_ id: Int) async throws -> URLResponse {
         try await rawRequest(
             executor: client.dataTask,
             url: apiBaseUrl.path("posts", String(id)),

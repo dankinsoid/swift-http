@@ -9,7 +9,6 @@ import Foundation
 
 /// A raw pipeline can be used to send an recieve raw body data values
 public struct HttpRawPipeline: HttpRequestPipeline {
-
     let url: HttpUrl
     let method: HttpMethod
     let headers: [HttpHeaderKey: String]
@@ -42,16 +41,16 @@ public struct HttpRawPipeline: HttpRequestPipeline {
     ///
     /// Executes  the request, encodes the body, validates the response and decodes the data
     ///
-    /// - Parameter executor: The  executor function to perform the HttpRequest
+    /// - Parameter executor: The  executor function to perform the URLRequest
     ///
     /// - Throws: `Error` if something was wrong
     ///
     /// - Returns: The HTTP response object
     ///
     public func execute(
-        _ executor: ((HttpRequest) async throws -> HttpResponse)
-    ) async throws -> HttpResponse {
-        let req = HttpRawRequest(
+        _ executor: (URLRequest) async throws -> URLResponse
+    ) async throws -> URLResponse {
+        let req = URLRequest(
             url: url,
             method: method,
             headers: headers,

@@ -9,7 +9,6 @@ import Foundation
 
 /// A generic error object to transfer HTTP related error messages
 public enum HttpError: LocalizedError {
-
     /// The response is not a valid HTTP response
     case invalidResponse
 
@@ -17,13 +16,13 @@ public enum HttpError: LocalizedError {
     case unknownStatusCode
 
     /// The response has an invalid status code
-    case invalidStatusCode(HttpResponse)
+    case invalidStatusCode(URLResponse)
 
     /// The response is missing a header
-    case missingHeader(HttpResponse)
+    case missingHeader(URLResponse)
 
     /// The response has an invalid header value
-    case invalidHeaderValue(HttpResponse)
+    case invalidHeaderValue(URLResponse)
 
     /// Upload request does not have data to send
     case missingUploadData
@@ -38,15 +37,15 @@ public enum HttpError: LocalizedError {
             return "Invalid response"
         case .unknownStatusCode:
             return "Unknown status code"
-        case .invalidStatusCode(let response):
+        case let .invalidStatusCode(response):
             return "Invalid status code: \(response.statusCode.rawValue)"
-        case .missingHeader(_):
+        case .missingHeader:
             return "Missing header"
-        case .invalidHeaderValue(_):
+        case .invalidHeaderValue:
             return "Invalid header value"
         case .missingUploadData:
             return "Missing upload data"
-        case .unknown(let error):
+        case let .unknown(error):
             return error.localizedDescription
         }
     }

@@ -9,7 +9,6 @@ import Foundation
 
 /// Transforms a given response into a decodable object and validates it upfront
 public protocol HttpResponseTransformer {
-
     /// The decodable object type
     associatedtype T: Decodable
 
@@ -19,7 +18,7 @@ public protocol HttpResponseTransformer {
     ///
     /// Decodes the response data into a custom decodable object
     ///
-    /// - Parameter data: The HttpResponse data
+    /// - Parameter data: The URLResponse data
     ///
     /// - Throws: `Error` if something was wrong with the decoding
     ///

@@ -9,7 +9,6 @@ import Foundation
 
 /// A collection of built-in request pipelines, raw, encodable, decodable, codable
 public protocol HttpCodablePipelineCollection {
-
     ///
     /// The generic encoder object used to encode body values
     ///
@@ -25,29 +24,27 @@ public protocol HttpCodablePipelineCollection {
     func decoder<T: Decodable>() -> HttpResponseDecoder<T>
 }
 
-extension HttpCodablePipelineCollection {
-
+public extension HttpCodablePipelineCollection {
     ///
     /// The generic encoder object used to encode body values
     ///
     /// - Returns: The default json encoder
     ///
-    public func encoder<T: Encodable>() -> HttpRequestEncoder<T> { .json() }
+    func encoder<T: Encodable>() -> HttpRequestEncoder<T> { .json() }
 
     ///
     /// The generic decoder object used to decode response data
     ///
     /// - Returns: The default json decoder
     ///
-    public func decoder<T: Decodable>() -> HttpResponseDecoder<T> { .json() }
+    func decoder<T: Decodable>() -> HttpResponseDecoder<T> { .json() }
 }
 
-extension HttpCodablePipelineCollection {
-
+public extension HttpCodablePipelineCollection {
     ///
     /// Executes a raw request pipeline using a data values as a body and returns the response
     ///
-    /// - Parameter executor: The  executor function to perform the HttpRequest
+    /// - Parameter executor: The  executor function to perform the URLRequest
     /// - Parameter url: The url to send the request
     /// - Parameter method: The request method
     /// - Parameter headers: The request headers
@@ -58,14 +55,14 @@ extension HttpCodablePipelineCollection {
     ///
     /// - Returns: The HTTP response object
     ///
-    public func rawRequest(
-        executor: ((HttpRequest) async throws -> HttpResponse),
+    func rawRequest(
+        executor: (URLRequest) async throws -> URLResponse,
         url: HttpUrl,
         method: HttpMethod,
         headers: [HttpHeaderKey: String] = [:],
         body: Data? = nil,
         validators: [HttpResponseValidator] = [HttpStatusCodeValidator()]
-    ) async throws -> HttpResponse {
+    ) async throws -> URLResponse {
         let pipeline: HttpRawPipeline = .init(
             url: url,
             method: method,
@@ -79,7 +76,7 @@ extension HttpCodablePipelineCollection {
     ///
     /// Executes an encodable request pipeline using an encodable object as a body value and returns the response
     ///
-    /// - Parameter executor: The  executor function to perform the HttpRequest
+    /// - Parameter executor: The  executor function to perform the URLRequest
     /// - Parameter url: The url to send the request
     /// - Parameter method: The request method
     /// - Parameter headers: The request headers
@@ -90,14 +87,14 @@ extension HttpCodablePipelineCollection {
     ///
     /// - Returns: The HTTP response object
     ///
-    public func encodableRequest<T: Encodable>(
-        executor: ((HttpRequest) async throws -> HttpResponse),
+    func encodableRequest<T: Encodable>(
+        executor: (URLRequest) async throws -> URLResponse,
         url: HttpUrl,
         method: HttpMethod,
         headers: [HttpHeaderKey: String] = [:],
         body: T,
         validators: [HttpResponseValidator] = [HttpStatusCodeValidator()]
-    ) async throws -> HttpResponse {
+    ) async throws -> URLResponse {
         let pipeline: HttpEncodablePipeline<T> = .init(
             url: url,
             method: method,
@@ -112,7 +109,7 @@ extension HttpCodablePipelineCollection {
     ///
     /// Executes a raw request pipeline using a data values as a body and returns the response
     ///
-    /// - Parameter executor: The  executor function to perform the HttpRequest
+    /// - Parameter executor: The  executor function to perform the URLRequest
     /// - Parameter url: The url to send the request
     /// - Parameter method: The request method
     /// - Parameter headers: The request headers
@@ -123,8 +120,8 @@ extension HttpCodablePipelineCollection {
     ///
     /// - Returns: The decoded response object
     ///
-    public func decodableRequest<U: Decodable>(
-        executor: ((HttpRequest) async throws -> HttpResponse),
+    func decodableRequest<U: Decodable>(
+        executor: (URLRequest) async throws -> URLResponse,
         url: HttpUrl,
         method: HttpMethod,
         body: Data? = nil,
@@ -145,7 +142,7 @@ extension HttpCodablePipelineCollection {
     ///
     /// Executes a codable request pipeline using an encodable body and decodes the response
     ///
-    /// - Parameter executor: The  executor function to perform the HttpRequest
+    /// - Parameter executor: The  executor function to perform the URLRequest
     /// - Parameter url: The url to send the request
     /// - Parameter method: The request method
     /// - Parameter headers: The request headers
@@ -156,8 +153,8 @@ extension HttpCodablePipelineCollection {
     ///
     /// - Returns: The decoded response object
     ///
-    public func codableRequest<T: Encodable, U: Decodable>(
-        executor: ((HttpRequest) async throws -> HttpResponse),
+    func codableRequest<T: Encodable, U: Decodable>(
+        executor: (URLRequest) async throws -> URLResponse,
         url: HttpUrl,
         method: HttpMethod,
         headers: [HttpHeaderKey: String] = [:],

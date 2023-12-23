@@ -14,7 +14,6 @@ import Logging
 
 /// Default URLSession based implementation of the HttpClient protocol
 public struct UrlSessionHttpClient: HttpClient {
-
     private let loggerLabel = "com.binarybirds.swift-http"
 
     let session: URLSession
@@ -66,29 +65,26 @@ public struct UrlSessionHttpClient: HttpClient {
     ///
     /// - Returns: The entire HTTP response
     ///
-    public func dataTask(_ req: HttpRequest) async throws -> HttpResponse {
-        let urlRequest = req.urlRequest
-        logger.info(.init(stringLiteral: urlRequest.curlString))
+    public func dataTask(_ req: URLRequest) async throws -> URLResponse {
+        logger.info(.init(stringLiteral: req.curlString))
         let res: (Data, URLResponse)
 
         #if os(Linux)
-            res = try await asyncMethod(with: urlRequest, session.dataTask)
+            res = try await asyncMethod(with: req, session.dataTask)
         #else
             if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, macOS 12.0, *) {
-                res = try await session.data(for: urlRequest)
-            }
-            else {
-                res = try await asyncMethod(with: urlRequest, session.dataTask)
+                res = try await session.data(for: req)
+            } else {
+                res = try await asyncMethod(with: req, session.dataTask)
             }
         #endif
 
         do {
-            let rawResponse = try HttpRawResponse(res)
+            let rawResponse = res.1
             logger.trace(.init(stringLiteral: rawResponse.traceLogValue))
             logger.debug(.init(stringLiteral: res.0.logValue))
             return rawResponse
-        }
-        catch {
+        } catch {
             logger.debug(.init(stringLiteral: res.0.logValue))
             throw error
         }
@@ -103,8 +99,7 @@ public struct UrlSessionHttpClient: HttpClient {
     ///
     /// - Returns: The entire HTTP response
     ///
-    public func uploadTask(_ req: HttpRequest) async throws -> HttpResponse {
-        let urlRequest = req.urlRequest
+    public func uploadTask(_ urlRequest: URLRequest) async throws -> URLResponse {
         guard let data = urlRequest.httpBody else {
             throw HttpError.missingUploadData
         }
@@ -122,8 +117,7 @@ public struct UrlSessionHttpClient: HttpClient {
                     from: data,
                     delegate: nil
                 )
-            }
-            else {
+            } else {
                 res = try await asyncMethod(with: urlRequest) {
                     session.uploadTask(
                         with: $0,
@@ -134,16 +128,10 @@ public struct UrlSessionHttpClient: HttpClient {
             }
         #endif
 
-        do {
-            let rawResponse = try HttpRawResponse(res)
-            logger.trace(.init(stringLiteral: rawResponse.traceLogValue))
-            logger.debug(.init(stringLiteral: res.0.logValue))
-            return rawResponse
-        }
-        catch {
-            logger.debug(.init(stringLiteral: res.0.logValue))
-            throw error
-        }
+        let rawResponse = res.1
+        logger.trace(.init(stringLiteral: rawResponse.traceLogValue))
+        logger.debug(.init(stringLiteral: res.0.logValue))
+        return rawResponse
     }
 
     ///
@@ -155,8 +143,7 @@ public struct UrlSessionHttpClient: HttpClient {
     ///
     /// - Returns: The entire response, setting the file location url as an encoded utf8 string as the response data
     ///
-    public func downloadTask(_ req: HttpRequest) async throws -> HttpResponse {
-        let urlRequest = req.urlRequest
+    public func downloadTask(_ urlRequest: URLRequest) async throws -> URLResponse {
         logger.info(.init(stringLiteral: urlRequest.curlString))
         let res: (URL, URLResponse)
         #if os(Linux)
@@ -164,8 +151,7 @@ public struct UrlSessionHttpClient: HttpClient {
         #else
             if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, macOS 12.0, *) {
                 res = try await session.download(for: urlRequest, delegate: nil)
-            }
-            else {
+            } else {
                 res = try await asyncMethod(
                     with: urlRequest,
                     session.downloadTask
@@ -178,12 +164,14 @@ public struct UrlSessionHttpClient: HttpClient {
         }
 
         do {
-            let rawResponse = try HttpRawResponse((pathData, res.1))
+            let rawResponse = res.1
+            rawResponse
+            try HttpRawResponse((pathData, res.1))
+
             logger.trace(.init(stringLiteral: rawResponse.traceLogValue))
             logger.debug(.init(stringLiteral: res.0.absoluteString))
             return rawResponse
-        }
-        catch {
+        } catch {
             logger.debug(.init(stringLiteral: res.0.absoluteString))
             throw error
         }
@@ -199,8 +187,7 @@ public struct UrlSessionHttpClient: HttpClient {
             method(urlRequest) { t, response, error in
                 if let t = t, let response = response {
                     continuation.resume(returning: (t, response))
-                }
-                else {
+                } else {
                     continuation.resume(
                         throwing: error ?? HttpError.invalidResponse
                     )

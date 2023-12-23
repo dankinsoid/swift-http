@@ -9,7 +9,6 @@ import Foundation
 
 /// A response decoder that can transform the body data into a decodable object and validate the response
 public struct HttpResponseDecoder<T: Decodable>: HttpResponseTransformer {
-
     /// The response valdators
     public let validators: [HttpResponseValidator]
 
@@ -32,7 +31,7 @@ public struct HttpResponseDecoder<T: Decodable>: HttpResponseTransformer {
     ///
     /// Decodes the data using the decoder
     ///
-    /// - Parameter data: The  HttpRequest to perfrom
+    /// - Parameter data: The  URLRequest to perfrom
     ///
     /// - Throws: `Error` if something was wrong during the decoding
     ///
@@ -43,20 +42,19 @@ public struct HttpResponseDecoder<T: Decodable>: HttpResponseTransformer {
     }
 }
 
-extension HttpResponseDecoder {
-
+public extension HttpResponseDecoder {
     ///
     /// Initialize a JSON response decoder
     ///
     /// - Parameter decoder: The JSONDecoder object to use, the default is the built in JSONDecoder
     /// - Parameter validators: The array of validators, by default it validates the content type
     ///
-    public static func json(
+    static func json(
         _ decoder: JSONDecoder = .init(),
         validators: [HttpResponseValidator] = [
             HttpHeaderValidator(.contentType) {
                 $0.contains("application/json")
-            }
+            },
         ]
     ) -> HttpResponseDecoder {
         .init(decoder: decoder, validators: validators)

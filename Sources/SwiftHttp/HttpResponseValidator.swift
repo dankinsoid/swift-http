@@ -9,7 +9,6 @@ import Foundation
 
 /// A generic response validator protocol
 public protocol HttpResponseValidator {
-
     ///
     /// Validates a response object
     ///
@@ -17,5 +16,5 @@ public protocol HttpResponseValidator {
     ///
     /// - Throws: `Error` if something was wrong with the response
     ///
-    func validate(_ response: HttpResponse) throws
+    func validate(_ response: URLResponse) throws
 }

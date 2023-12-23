@@ -9,7 +9,6 @@ import Foundation
 
 /// Type safe header key wrapper
 public struct HttpHeaderKey {
-
     public var rawValue: String
 
     public init(_ rawValue: String) { self.rawValue = rawValue }
@@ -73,6 +72,7 @@ public struct HttpHeaderKey {
     public static let control: HttpHeaderKey = "Control"
     public static let conversion: HttpHeaderKey = "Conversion"
     public static let conversionWithLoss: HttpHeaderKey = "Conversion-With-Loss"
+    public static let cookie: HttpHeaderKey = "Cookie"
     public static let dLExpansionHistory: HttpHeaderKey = "DL-Expansion-History"
     public static let date: HttpHeaderKey = "Date"
     public static let dateReceived: HttpHeaderKey = "Date-Received"
@@ -217,6 +217,7 @@ public struct HttpHeaderKey {
     public static let seeAlso: HttpHeaderKey = "See-Also"
     public static let sender: HttpHeaderKey = "Sender"
     public static let sensitivity: HttpHeaderKey = "Sensitivity"
+    public static let setCookie: HttpHeaderKey = "Set-Cookie"
     public static let solicitation: HttpHeaderKey = "Solicitation"
     public static let subject: HttpHeaderKey = "Subject"
     public static let summary: HttpHeaderKey = "Summary"
@@ -264,7 +265,6 @@ public struct HttpHeaderKey {
 extension HttpHeaderKey: Hashable, Codable, ExpressibleByStringLiteral,
     RawRepresentable, CustomStringConvertible
 {
-
     public var description: String { rawValue }
 
     /// Creates a new instance with the specified raw value.

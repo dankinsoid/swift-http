@@ -14,7 +14,6 @@ import Foundation
 /// It might includes validations date encoding, decoding
 ///
 public protocol HttpRequestPipeline {
-
     /// generic response type
     associatedtype Response
 
@@ -23,13 +22,13 @@ public protocol HttpRequestPipeline {
     ///
     /// The executor is usually a HttpClient task function, returning a response
     ///
-    /// - Parameter executor: The  executor function to perform the HttpRequest
+    /// - Parameter executor: The  executor function to perform the URLRequest
     ///
     /// - Throws: `HttpError` if something was wrong with the request
     ///
     /// - Returns: The generic Response object
     ///
     func execute(
-        _ executor: ((HttpRequest) async throws -> HttpResponse)
+        _ executor: (URLRequest) async throws -> URLResponse
     ) async throws -> Response
 }

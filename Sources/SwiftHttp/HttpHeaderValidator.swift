@@ -9,7 +9,6 @@ import Foundation
 
 /// Validates a header value using a key and a validation block
 public struct HttpHeaderValidator: HttpResponseValidator {
-
     /// The header key to look for
     let key: HttpHeaderKey
 
@@ -43,7 +42,7 @@ public struct HttpHeaderValidator: HttpResponseValidator {
     ///
     /// - Throws A HttpError object if the validation fails
     ///
-    public func validate(_ response: HttpResponse) throws {
+    public func validate(_ response: URLResponse) throws {
         guard let value = response.headers[key] else {
             throw HttpError.missingHeader(response)
         }

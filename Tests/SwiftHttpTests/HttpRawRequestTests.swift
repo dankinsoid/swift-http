@@ -10,7 +10,6 @@ import XCTest
 @testable import SwiftHttp
 
 final class HttpRawRequestTests: XCTestCase {
-
     func testRawRequest() async throws {
         let client = UrlSessionHttpClient(session: .shared, logLevel: .trace)
 
@@ -24,7 +23,7 @@ final class HttpRawRequestTests: XCTestCase {
             fragment: nil
         )
 
-        let req = HttpRawRequest(
+        let req = URLRequest(
             url: url,
             method: .get,
             headers: [:],

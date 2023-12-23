@@ -7,9 +7,8 @@
 
 import Foundation
 
-/// Validates a HttpResponse using an array of validators
+/// Validates a URLResponse using an array of validators
 public struct HttpResponseValidation {
-
     let validators: [HttpResponseValidator]
 
     ///
@@ -24,11 +23,11 @@ public struct HttpResponseValidation {
     ///
     /// Validates a HTTP response object using all of the validators
     ///
-    /// - Parameter response: The HttpResponse object
+    /// - Parameter response: The URLResponse object
     ///
     /// - Throws: `Error` if something was wrong with the validation
     ///
-    public func validate(_ response: HttpResponse) throws {
+    public func validate(_ response: URLResponse) throws {
         for validator in validators {
             try validator.validate(response)
         }

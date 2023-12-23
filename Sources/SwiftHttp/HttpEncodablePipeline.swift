@@ -9,7 +9,6 @@ import Foundation
 
 /// An encodable pipeline can be used to send an encodable object as a request body
 public struct HttpEncodablePipeline<T: Encodable>: HttpRequestPipeline {
-
     let url: HttpUrl
     let method: HttpMethod
     let headers: [HttpHeaderKey: String]
@@ -46,20 +45,20 @@ public struct HttpEncodablePipeline<T: Encodable>: HttpRequestPipeline {
     ///
     /// Executes  the request, encodes the body, validates the response and decodes the data
     ///
-    /// - Parameter executor: The  executor function to perform the HttpRequest
+    /// - Parameter executor: The  executor function to perform the URLRequest
     ///
     /// - Throws: `Error` if something was wrong
     ///
     /// - Returns: The HTTP response object
     ///
     public func execute(
-        _ executor: ((HttpRequest) async throws -> HttpResponse)
-    ) async throws -> HttpResponse {
-        let req = HttpRawRequest(
+        _ executor: (URLRequest) async throws -> URLResponse
+    ) async throws -> URLResponse {
+        let req = try URLRequest(
             url: url,
             method: method,
             headers: headers.merging(encoder.headers) { $1 },
-            body: try encoder.encode(body)
+            body: encoder.encode(body)
         )
 
         let response = try await executor(req)

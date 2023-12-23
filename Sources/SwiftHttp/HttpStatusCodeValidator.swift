@@ -9,7 +9,6 @@ import Foundation
 
 /// Validates a status code using an expected value
 public struct HttpStatusCodeValidator: HttpResponseValidator {
-
     /// The expected status code
     let code: HttpStatusCode?
 
@@ -32,7 +31,7 @@ public struct HttpStatusCodeValidator: HttpResponseValidator {
     ///
     /// - Throws A HttpError object if the validation fails
     ///
-    public func validate(_ response: HttpResponse) throws {
+    public func validate(_ response: URLResponse) throws {
         if let code = code, response.statusCode != code {
             throw HttpError.invalidStatusCode(response)
         }

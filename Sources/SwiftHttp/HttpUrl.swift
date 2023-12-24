@@ -179,7 +179,7 @@ public extension HttpUrl {
     var url: URL {
         var components = URLComponents()
         components.scheme = scheme
-        components.host = host
+        components.host = host.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         components.port = port
         var path = "/" + path.joined(separator: "/")
 
@@ -193,10 +193,10 @@ public extension HttpUrl {
         //        if !isTrailingSlashEnabled, path.last == "/", !query.isEmpty {
         //            path.removeLast()
         //        }
-        components.path = path
-        components.fragment = fragment
+        components.path = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? path
+        components.fragment = fragment?.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
         components.queryItems = query.map {
-            .init(name: $0.key, value: $0.value)
+            URLQueryItem(name: $0.key, value: $0.value.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? $0.value)
         }
         if let items = components.queryItems, items.isEmpty {
             components.queryItems = nil

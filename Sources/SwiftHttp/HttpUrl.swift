@@ -9,7 +9,6 @@ import Foundation
 
 /// A wrapper to store and manipulate URLs in a safer way
 public struct HttpUrl {
-
     /// Scheme of the url, e.g. https
     public var scheme: String
 
@@ -33,7 +32,7 @@ public struct HttpUrl {
     public var fragment: String?
 
     /// Appends trailing slash at the end of the path, e.g. `localhost.com/any/path/`
-    public private(set) var isTrailingSlashEnabled: Bool
+    public var isTrailingSlashEnabled: Bool
 
     ///
     /// Initialize a HttpUrl object
@@ -64,31 +63,25 @@ public struct HttpUrl {
         self.resource = resource
         self.query = query
         self.fragment = fragment
-        self.isTrailingSlashEnabled = trailingSlashEnabled
+        isTrailingSlashEnabled = trailingSlashEnabled
     }
 }
 
-extension HttpUrl: Equatable {
-}
+extension HttpUrl: Equatable {}
 
-extension HttpUrl: Hashable {
-}
+extension HttpUrl: Hashable {}
 
-extension HttpUrl: Encodable {
-}
+extension HttpUrl: Encodable {}
 
-extension HttpUrl: Decodable {
-}
+extension HttpUrl: Decodable {}
 
 extension HttpUrl: CustomStringConvertible {
-
     public var description: String {
         url.description
     }
 }
 
-extension HttpUrl {
-
+public extension HttpUrl {
     ///
     /// Add new scheme to a given url
     ///
@@ -96,7 +89,7 @@ extension HttpUrl {
     ///
     /// - Returns: A new HttpUrl object
     ///
-    public func scheme(_ value: String) -> HttpUrl {
+    func scheme(_ value: String) -> HttpUrl {
         var newUrl = self
         newUrl.scheme = value
         return newUrl
@@ -109,7 +102,7 @@ extension HttpUrl {
     ///
     /// - Returns: A new HttpUrl object
     ///
-    public func path(_ values: String...) -> HttpUrl {
+    func path(_ values: String...) -> HttpUrl {
         var newUrl = self
         newUrl.path = path + values
         return newUrl
@@ -122,7 +115,7 @@ extension HttpUrl {
     ///
     /// - Returns: A new HttpUrl object
     ///
-    public func path(_ values: [String]) -> HttpUrl {
+    func path(_ values: [String]) -> HttpUrl {
         var newUrl = self
         newUrl.path = path + values
         return newUrl
@@ -135,7 +128,7 @@ extension HttpUrl {
     ///
     /// - Returns: A new HttpUrl object
     ///
-    public func query(_ query: [String: String?]) -> HttpUrl {
+    func query(_ query: [String: String?]) -> HttpUrl {
         let finalQuery = query.compactMapValues { $0 }
         var newUrl = self
         newUrl.query = newUrl.query.merging(finalQuery) { $1 }
@@ -150,7 +143,7 @@ extension HttpUrl {
     ///
     /// - Returns: A new HttpUrl object
     ///
-    public func query(_ key: String, _ value: String?) -> HttpUrl {
+    func query(_ key: String, _ value: String?) -> HttpUrl {
         query([key: value])
     }
 
@@ -161,7 +154,7 @@ extension HttpUrl {
     ///
     /// - Returns: A new HttpUrl object
     ///
-    public func resource(_ resource: String) -> HttpUrl {
+    func resource(_ resource: String) -> HttpUrl {
         var newUrl = self
         newUrl.resource = resource
         return newUrl
@@ -174,7 +167,7 @@ extension HttpUrl {
     ///
     /// - Returns: A new HttpUrl object
     ///
-    public func fragment(_ fragment: String) -> HttpUrl {
+    func fragment(_ fragment: String) -> HttpUrl {
         var newUrl = self
         newUrl.fragment = fragment
         return newUrl
@@ -183,7 +176,7 @@ extension HttpUrl {
     // MARK: - URL
 
     /// Returns the URL representation of the HttpUrl object
-    public var url: URL {
+    var url: URL {
         var components = URLComponents()
         components.scheme = scheme
         components.host = host
@@ -192,8 +185,7 @@ extension HttpUrl {
 
         if let resource = resource {
             path += (resource.hasPrefix("/") ? resource : "/" + resource)
-        }
-        else {
+        } else {
             if isTrailingSlashEnabled {
                 path += "/"
             }
@@ -219,16 +211,14 @@ extension HttpUrl {
     }
 }
 
-extension HttpUrl {
-
+public extension HttpUrl {
     /// Initialize a `HttpUrl` object with `string`
     ///
     /// Returns `nil` if a `HttpUrl` cannot be formed with the string (for example, if the string contains characters that are illegal in a URL, or is an empty string).
-    public init?(string: String) {
+    init?(string: String) {
         if let url = URL(string: string) {
             self.init(url: url)
-        }
-        else {
+        } else {
             return nil
         }
     }
@@ -236,12 +226,12 @@ extension HttpUrl {
     /// Initialize a `HttpUrl` object with `URL` object
     ///
     /// Returns `nil` if a `HttpUrl` cannot be formed with the `URL` (for example, if the string contains characters that are illegal in a URL, or is an empty string).
-    public init?(url: URL) {
+    init?(url: URL) {
         guard let components = URLComponents(
             url: url,
             resolvingAgainstBaseURL: true
         ) else { return nil }
-        
+
         var path = components.path
             .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
             .components(separatedBy: "/")
@@ -258,9 +248,9 @@ extension HttpUrl {
             port: components.port ?? 80,
             path: path,
             resource: resource,
-            query: components.queryItems.map({
-                Dictionary($0.map({ ($0.name, $0.value ?? "") })) { _, s in s }
-            }) ?? [:],
+            query: components.queryItems.map {
+                Dictionary($0.map { ($0.name, $0.value ?? "") }) { _, s in s }
+            } ?? [:],
             fragment: components.fragment
         )
     }

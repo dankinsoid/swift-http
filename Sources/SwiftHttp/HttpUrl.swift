@@ -34,6 +34,8 @@ public struct HttpUrl {
     /// Appends trailing slash at the end of the path, e.g. `localhost.com/any/path/`
     public var isTrailingSlashEnabled: Bool
 
+    private var _url: URL?
+
     ///
     /// Initialize a HttpUrl object
     ///
@@ -63,6 +65,7 @@ public struct HttpUrl {
         self.resource = resource
         self.query = query
         self.fragment = fragment
+        _url = nil
         isTrailingSlashEnabled = trailingSlashEnabled
     }
 }
@@ -177,6 +180,7 @@ public extension HttpUrl {
 
     /// Returns the URL representation of the HttpUrl object
     var url: URL {
+        if let url = _url { return url }
         var components = URLComponents()
         components.scheme = scheme
         components.host = host.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
@@ -196,7 +200,7 @@ public extension HttpUrl {
         components.path = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? path
         components.fragment = fragment?.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
         components.queryItems = query.map {
-            URLQueryItem(name: $0.key, value: $0.value.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? $0.value)
+            URLQueryItem(name: $0.key, value: $0.value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? $0.value)
         }
         if let items = components.queryItems, items.isEmpty {
             components.queryItems = nil
@@ -253,5 +257,6 @@ public extension HttpUrl {
             } ?? [:],
             fragment: components.fragment
         )
+        _url = url
     }
 }
